@@ -17,8 +17,8 @@ app.get('/user', async (request, response) => {
   const { email, password } = userInfo;
   for (let requiredParameter of ['email', 'password']) {
     if (!userInfo[requiredParameter]) {
-      return response.status(400).send({error: 
-        `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}`});
+      return response.status(400).send({
+        error: `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}.`});
     };
   };
   const user = await database('users').where('email', email).first();
@@ -47,8 +47,50 @@ app.get('/palettes', async (request, response) => {
   const palettes = await database('palettes').select();
 
   return response.status(200).json(palettes)
-})
+});
 
+app.post('/user', async (request, response) => {
+  const newUser = request.body;
+  for (let requiredParameter of ['email', 'password']) {
+    if(!newUser[requiredParameter]) {
+      return response.status(422).send({
+        error: `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}.`
+      });
+    };
+  };
+  const userExists = await database('users').where('email', newUser.email).first();
+  if (userExists) {
+    return response.status(401).json({ error: "User already exists." })
+  } else {
+    const newId = await database('users').insert(newUser, 'id');
+    return response.status(201).json({ id: newId[0] });
+  };
+});
 
+app.post('/projects', async (request, response) => {
+  const newProject = request.body;
+  for (let requiredParameter of ['name', 'user_id']) {
+    if(!newProject[requiredParameter]) {
+      return response.status(422).send({
+        error: `Expected format: { name: <string>, user_id: <integer> }. You are missing a value for ${requiredParameter}.`
+      });
+    };
+  };
+  const newId = await database('projects').insert(newProject, 'id');
+  return response.status(201).json({ id: newId[0] });
+});
+
+app.post('/palettes', async (request, response) => {
+  const newPalette = request.body;
+  for (let requiredParameter of ['name', 'hex_codes', 'project_id']) {
+    if(!newPalette[requiredParameter]) {
+      return response.status(422).send({
+        error: `Expected format: { name: <string>, hex_codes: <string>, project_id: <integer> }. You are missing a value for ${requiredParameter}.`
+      });
+    };
+  };
+  const newId = await database('palettes').insert(newPalette, 'id');
+  return response.status(201).json({ id: newId[0] });
+});
 
 module.exports = app;
