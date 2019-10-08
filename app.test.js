@@ -18,14 +18,26 @@ describe('Server', () => {
   });
 
   describe('GET /user', () => {
-    it('should return a 200 status code when a user logs in', async () => {
+    it('should return a 200 status code and user ID when user logs', async () => {
       const expectedUser = await database('users').select().first();
-      // console.log(expectedUser)
       const { email, password, id } = expectedUser;
-      // console.log('email', email)
       const response = await request(app).get('/user').send({email, password});
-      // console.log(response.body)
       expect(response.body.id).toEqual(id);
+    });
+
+    it('should return a 400 status and error message if email or password is missing.', async () => {
+      const userLoginInfo = { password: '12345'};
+      const response = await request(app).get('/user').send(userLoginInfo);
+      const missingEmailError = `Expected format: { email: <string>, password: <string> }. You are missing a value for email`;
+      expect(response.status).toBe(400);
+      expect(response.body.error).toEqual(missingEmailError);
+    });
+
+    it('should return a 400 status and error message if email or password is incorrect.', async () => {
+      const userLoginInfo = { email: '12345', password: 'bob'};
+      const response = await request(app).get('/user').send(userLoginInfo);
+      expect(response.status).toBe(400);
+      expect(response.body.error).toEqual("Unable to verify user.");
     });
   
   });

@@ -14,17 +14,18 @@ app.get('/', (request, response) => {
 
 app.get('/user', async (request, response) => {
   const userInfo = request.body;
-  // console.log('user info', userInfo)
   const { email, password } = userInfo;
   for (let requiredParameter of ['email', 'password']) {
-    if(!userInfo[requiredParameter]) {
-      return response.status(404).send({error: 
-        `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}`})
-    }
-  }
+    if (!userInfo[requiredParameter]) {
+      return response.status(400).send({error: 
+        `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}`});
+    };
+  };
   const user = await database('users').where('email', email).first();
-  if (user.password === password) {
+  if (user && user.password === password) {
     return response.status(200).json({id: user.id});
+  } else {
+    return response.status(400).json({error: "Unable to verify user."})
   }
 });
 
