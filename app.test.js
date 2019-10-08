@@ -28,7 +28,7 @@ describe('Server', () => {
     it('should return a 400 status and error message if email or password is missing.', async () => {
       const userLoginInfo = { password: '12345'};
       const response = await request(app).get('/user').send(userLoginInfo);
-      const missingEmailError = `Expected format: { email: <string>, password: <string> }. You are missing a value for email`;
+      const missingEmailError = `Expected format: { email: <string>, password: <string> }. You are missing a value for email.`;
       expect(response.status).toBe(400);
       expect(response.body.error).toEqual(missingEmailError);
     });
@@ -72,5 +72,23 @@ describe('Server', () => {
       expect(hex_codes).toEqual(expectedPalettes[0].hex_codes)
     })
   })
+
+  describe('POST /user', () => {
+    it('should return a 201 status code and a new user Id', async () => {
+      const newUserInfo = { email: 'hellokitty@turing.io', password: '12345'};
+      const response = await request(app).post('/user').send(newUserInfo);
+      const expectedUser = await database('users').where('email', newUserInfo.email).first();
+      expect(response.body.id).toEqual(expectedUser.id);
+    });
+
+    it('should return a 422 status code if there is a missing parameter in request body', async () => {
+      const newUserInfo = { password: '12345'};
+      const response = await request(app).post('/user').send(newUserInfo);
+      expect(response.status).toBe(422);
+      expect(response.body.error).toEqual("Expected format: { email: <string>, password: <string> }. You are missing a value for email.")
+      
+    });
+
+  });
 
 });

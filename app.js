@@ -17,8 +17,8 @@ app.get('/user', async (request, response) => {
   const { email, password } = userInfo;
   for (let requiredParameter of ['email', 'password']) {
     if (!userInfo[requiredParameter]) {
-      return response.status(400).send({error: 
-        `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}`});
+      return response.status(400).send({
+        error: `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}.`});
     };
   };
   const user = await database('users').where('email', email).first();
@@ -47,7 +47,20 @@ app.get('/palettes', async (request, response) => {
   const palettes = await database('palettes').select();
 
   return response.status(200).json(palettes)
-})
+});
+
+app.post('/user', async (request, response) => {
+  const newUser = request.body;
+  for (let requiredParameter of ['email', 'password']) {
+    if(!newUser[requiredParameter]) {
+      return response.status(422).send({
+        error: `Expected format: { email: <string>, password: <string> }. You are missing a value for ${requiredParameter}.`
+      });
+    };
+  };
+  const newId = await database('users').insert(newUser, 'id');
+  return response.status(201).json({ id: newId[0] })
+});
 
 
 
