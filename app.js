@@ -80,4 +80,17 @@ app.post('/projects', async (request, response) => {
   return response.status(201).json({ id: newId[0] });
 });
 
+app.post('/palettes', async (request, response) => {
+  const newPalette = request.body;
+  for (let requiredParameter of ['name', 'hex_codes', 'project_id']) {
+    if(!newPalette[requiredParameter]) {
+      return response.status(422).send({
+        error: `Expected format: { name: <string>, hex_codes: <string>, project_id: <integer> }. You are missing a value for ${requiredParameter}.`
+      });
+    };
+  };
+  const newId = await database('palettes').insert(newPalette, 'id');
+  return response.status(201).json({ id: newId[0] });
+});
+
 module.exports = app;

@@ -107,6 +107,32 @@ describe('Server', () => {
       expect(newProject.name).toEqual(expectedProject.name);
       expect(response.body.id).toEqual(expectedProject.id);
     });
+
+    it('should return a 422 status code if there is a missing parameter in request body', async () => {
+      const newProject = { name: "Cool colors"};
+      const response = await request(app).post('/projects').send(newProject);
+      expect(response.status).toBe(422);
+      expect(response.body.error).toEqual("Expected format: { name: <string>, user_id: <integer> }. You are missing a value for user_id.");
+    });
+  });
+
+  describe('POST /palettes', () => {
+    it('should return a 201 status code and a new project Id', async () => {
+      const { id } = await database('projects').first();
+      const newPalette = { name: "Super Dope colors", hex_codes:"#FFFFFF,#000000,#808080,#A9A9A9,#FF0000", project_id: id };
+      const response = await request(app).post('/palettes').send(newPalette);
+      const expectedPalette = await database('palettes').where('id', response.body.id).first();
+      expect(response.status).toBe(201);
+      expect(newPalette.name).toEqual(expectedPalette.name);
+      expect(response.body.id).toEqual(expectedPalette.id);
+    });
+
+    it('should return a 422 status code if there is a missing parameter in request body', async () => {
+      const newPalette = { name: "Super Dope colors" };
+      const response = await request(app).post('/palettes').send(newPalette);
+      expect(response.status).toBe(422);
+      expect(response.body.error).toEqual("Expected format: { name: <string>, hex_codes: <string>, project_id: <integer> }. You are missing a value for hex_codes.");
+    });
   });
 
 });
