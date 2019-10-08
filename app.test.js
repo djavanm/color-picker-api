@@ -78,6 +78,7 @@ describe('Server', () => {
       const newUserInfo = { email: 'hellokitty@turing.io', password: '12345'};
       const response = await request(app).post('/user').send(newUserInfo);
       const expectedUser = await database('users').where('email', newUserInfo.email).first();
+      expect(response.status).toBe(201);
       expect(response.body.id).toEqual(expectedUser.id);
     });
 
@@ -86,9 +87,20 @@ describe('Server', () => {
       const response = await request(app).post('/user').send(newUserInfo);
       expect(response.status).toBe(422);
       expect(response.body.error).toEqual("Expected format: { email: <string>, password: <string> }. You are missing a value for email.")
-      
     });
-
   });
+
+  describe('POST /projects', () => {
+    it('should return a 201 status code and a new project Id', async () => {
+      const { id } = await database('users').first();
+      const newProject = { name: "Project Pat", user_id: id };
+      const response = await request(app).post('/projects').send(newProject);
+      const expectedProject = await database('projects').where('id', response.body.id).first();
+      expect(response.status).toBe(201);
+      expect(newProject.name).toEqual(expectedProject.name);
+      expect(response.body.id).toEqual(expectedProject.id);
+    });
+  });
+
 
 });

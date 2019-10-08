@@ -59,9 +59,20 @@ app.post('/user', async (request, response) => {
     };
   };
   const newId = await database('users').insert(newUser, 'id');
-  return response.status(201).json({ id: newId[0] })
+  return response.status(201).json({ id: newId[0] });
 });
 
-
+app.post('/projects', async (request, response) => {
+  const newProject = request.body;
+  for (let requiredParameter of ['name', 'user_id']) {
+    if(!newProject[requiredParameter]) {
+      return response.status(422).send({
+        error: `Expected format: { name: <string>, user_id: <integer> }. You are missing a value for ${requiredParameter}.`
+      });
+    };
+  };
+  const newId = await database('projects').insert(newProject, 'id');
+  return response.status(201).json({ id: newId[0] });
+});
 
 module.exports = app;
