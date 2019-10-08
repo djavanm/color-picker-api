@@ -14,6 +14,18 @@ module.exports = {
     }
   },
 
+  test: {
+    client: 'pg',
+    connection: 'postgres://localhost/color_picker_test',
+    useNullAsDefault: true, 
+    migrations: {
+      directory: './db/migrations'
+    },
+    seeds: {
+      directory: './db/seeds'
+    }
+  },
+
   // staging: {
   //   client: 'postgresql',
   //   connection: {
