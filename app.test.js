@@ -88,6 +88,13 @@ describe('Server', () => {
       expect(response.status).toBe(422);
       expect(response.body.error).toEqual("Expected format: { email: <string>, password: <string> }. You are missing a value for email.")
     });
+
+    it('should return a 401 status code if the email is already in use.', async () => {
+      const newUserInfo = { email: "bob@gmail.com", password: '12345'};
+      const response = await request(app).post('/user').send(newUserInfo);
+      expect(response.status).toBe(401);
+      expect(response.body.error).toEqual("User already exists.");
+    });
   });
 
   describe('POST /projects', () => {
@@ -101,6 +108,5 @@ describe('Server', () => {
       expect(response.body.id).toEqual(expectedProject.id);
     });
   });
-
 
 });

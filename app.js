@@ -58,8 +58,13 @@ app.post('/user', async (request, response) => {
       });
     };
   };
-  const newId = await database('users').insert(newUser, 'id');
-  return response.status(201).json({ id: newId[0] });
+  const userExists = await database('users').where('email', newUser.email).first();
+  if (userExists) {
+    return response.status(401).json({ error: "User already exists." })
+  } else {
+    const newId = await database('users').insert(newUser, 'id');
+    return response.status(201).json({ id: newId[0] });
+  };
 });
 
 app.post('/projects', async (request, response) => {
