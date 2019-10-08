@@ -29,4 +29,26 @@ app.get('/user', async (request, response) => {
   }
 });
 
+app.get('/projects/:id', async (request, response) => {
+  const userId = request.params.id;
+  const userProjects = await database('projects').where('user_id', userId).select();
+  
+  return response.status(200).json(userProjects)
+})
+
+app.get('/palettes/:id', async (request, response) => {
+  const { id } = request.params
+  const projectPalettes = await database('palettes').where('project_id', id).select();
+
+  return response.status(200).json(projectPalettes)
+})
+
+app.get('/palettes', async (request, response) => {
+  const palettes = await database('palettes').select();
+
+  return response.status(200).json(palettes)
+})
+
+
+
 module.exports = app;
