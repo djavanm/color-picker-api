@@ -119,8 +119,34 @@ app.delete('/projects/:id', async (request, response) => {
   } else {
     return response.status(404).send({
       error: 'This project does not exist.'
-    })
-  }
-})
+    });
+  };
+});
+
+app.patch('/palettes/:id', async (request, response) => {
+  const { id } = request.params;
+  const newName = request.body.name;
+  const paletteExists = await database('palettes').where('id', id).first();
+  if(paletteExists) {
+    await database('palettes').where('id', id).update({name: newName});
+    const updatedPalette = await database('palettes').where('id', id).first();
+    return response.status(200).send(updatedPalette);
+  } else {
+    return response.status(404).send({ error: 'This palette does not exist.' });
+  };
+});
+
+app.patch('/projects/:id', async (request, response) => {
+  const { id } = request.params;
+  const newName = request.body.name;
+  const projectExists = await database('projects').where('id', id).first();
+  if(projectExists) {
+    await database('projects').where('id', id).update({name: newName});
+    const updatedProject = await database('projects').where('id', id).first();
+    return response.status(200).send(updatedProject);
+  } else {
+    return response.status(404).send({ error: 'This project does not exist.' });
+  };
+});
 
 module.exports = app;
