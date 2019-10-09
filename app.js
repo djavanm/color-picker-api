@@ -93,4 +93,17 @@ app.post('/palettes', async (request, response) => {
   return response.status(201).json({ id: newId[0] });
 });
 
+app.delete('/palettes/:id', async (request, response) => {
+  const { id } = request.params;
+  const paletteExists = await database('palettes').where('id', id).first();
+  if(paletteExists) {
+    await database('palettes').where('id', id).delete();
+    return response.status(204).send();
+  } else {
+    return response.status(404).send({
+      error: 'This palette does not exist.'
+    });
+  };
+});
+
 module.exports = app;

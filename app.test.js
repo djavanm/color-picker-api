@@ -135,4 +135,13 @@ describe('Server', () => {
     });
   });
 
+  describe('DELETE /palettes/:id', () => {
+    it('should delete and return a 204 status code', async () => {
+      const { id } = await database('palettes').first();
+      const response = await request(app).delete(`/palettes/${id}`);
+
+      expect(response.status).toBe(204);
+    })
+  })
+
 });
