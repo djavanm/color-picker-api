@@ -141,8 +141,8 @@ describe('Server', () => {
       const response = await request(app).delete(`/palettes/${id}`);
 
       expect(response.status).toBe(204);
-    })
-  })
+    });
+  });
 
   describe('DELETE /projects/:id', () => {
     it('should delete a project and all its associated palettes return a 204 status code', async () => {
@@ -150,6 +150,24 @@ describe('Server', () => {
       const response = await request(app).delete(`/projects/${id}`);
 
       expect(response.status).toBe(204);
-    })
-  })
+    });
+  });
+
+  describe('PATCH /palettes/:id', () => {
+    it('should update a palette name and return a 200 status code', async () => {
+      const { id } = await database('palettes').first();
+      const response = await request(app).patch(`/palettes/${id}`).send({name: 'Palette Pat'});
+      expect(response.status).toBe(200);
+      expect(response.body.name).toEqual('Palette Pat');
+    });
+  });
+  
+  describe('PATCH /projects/:id', () => {
+    it('should update a project name and return a 200 status code', async () => {
+      const { id } = await database('projects').first();
+      const response = await request(app).patch(`/projects/${id}`).send({name: 'Project Pat'});
+      expect(response.status).toBe(200);
+      expect(response.body.name).toEqual('Project Pat');
+    });
+  });
 });
