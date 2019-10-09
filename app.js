@@ -44,9 +44,14 @@ app.get('/palettes/:id', async (request, response) => {
 })
 
 app.get('/palettes', async (request, response) => {
-  const palettes = await database('palettes').select();
-
-  return response.status(200).json(palettes)
+  const { name } = request.query;
+  if(name) {
+    const queriedPalettes = await database('palettes').where('name', 'like', `%${name}%`).select();
+    return response.status(200).json(queriedPalettes)
+  } else {
+     const palettes = await database("palettes").select();
+     return response.status(200).json(palettes)
+  }
 });
 
 app.post('/user', async (request, response) => {
