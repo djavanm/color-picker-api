@@ -135,4 +135,21 @@ describe('Server', () => {
     });
   });
 
+  describe('DELETE /palettes/:id', () => {
+    it('should delete and return a 204 status code', async () => {
+      const { id } = await database('palettes').first();
+      const response = await request(app).delete(`/palettes/${id}`);
+
+      expect(response.status).toBe(204);
+    })
+  })
+
+  describe('DELETE /projects/:id', () => {
+    it('should delete a project and all its associated palettes return a 204 status code', async () => {
+      const { id } = await database('projects').first();
+      const response = await request(app).delete(`/projects/${id}`);
+
+      expect(response.status).toBe(204);
+    })
+  })
 });

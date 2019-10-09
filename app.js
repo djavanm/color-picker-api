@@ -30,8 +30,8 @@ app.get('/user', async (request, response) => {
 });
 
 app.get('/projects/:id', async (request, response) => {
-  const userId = request.params.id;
-  const userProjects = await database('projects').where('user_id', userId).select();
+  const { id } = request.params;
+  const userProjects = await database('projects').where('user_id', id).select();
   
   return response.status(200).json(userProjects)
 })
@@ -92,5 +92,35 @@ app.post('/palettes', async (request, response) => {
   const newId = await database('palettes').insert(newPalette, 'id');
   return response.status(201).json({ id: newId[0] });
 });
+
+app.delete('/palettes/:id', async (request, response) => {
+  const { id } = request.params;
+  const paletteExists = await database('palettes').where('id', id).first();
+  if(paletteExists) {
+    await database('palettes').where('id', id).delete();
+    return response.status(204).send();
+  } else {
+    return response.status(404).send({
+      error: 'This palette does not exist.'
+    });
+  };
+});
+
+app.delete('/projects/:id', async (request, response) => {
+  const { id } = request.params;
+  const projectExists = await database('projects').where('id', id).first();
+  if(projectExists) {
+    const palettes = await database('palettes').where('project_id', id).select();
+    palettes.forEach( async palette => {
+      await database('palettes').where('id', palette.id).first().del();
+    })
+    await database('projects').where('id', id).del();
+    return response.status(204).send();
+  } else {
+    return response.status(404).send({
+      error: 'This project does not exist.'
+    })
+  }
+})
 
 module.exports = app;
