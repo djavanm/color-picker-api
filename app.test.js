@@ -170,4 +170,13 @@ describe('Server', () => {
       expect(response.body.name).toEqual('Project Pat');
     });
   });
+
+  describe("GET /palettes?name", () => {
+    it("should return a 200 status code and all the palettes that contain the given string", async () => {
+      const response = await request(app).get("/palettes?name=Warm");
+      const expectedPalettes = await database("palettes").where('name', 'like', '%Warm%').select();
+      
+      expect(response.body[0].name).toEqual(expectedPalettes[0].name)
+    });
+  });
 });
