@@ -4,4 +4,6 @@ node_js:
 services: 
   - postgresql
 before_script: 
-  - psql -c 'CREATE DATABSAE travis_test;' -U postgres
+  - psql -c 'CREATE DATABASE travis_test;' -U postgres
+notifications: 
+  emails: false
