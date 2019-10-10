@@ -3,16 +3,17 @@ const app = express();
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
+const cors = require('cors');
 
 app.set('port', 3001);
 app.use(express.json());
-// app.use(cors());
+app.use(cors());
 
 app.get('/', (request, response) => {
   response.send('Get ready to pick some colors')
 });
 
-app.get('/user', async (request, response) => {
+app.post('/user/login', async (request, response) => {
   const userInfo = request.body;
   const { email, password } = userInfo;
   for (let requiredParameter of ['email', 'password']) {
@@ -54,7 +55,7 @@ app.get('/palettes', async (request, response) => {
   }
 });
 
-app.post('/user', async (request, response) => {
+app.post('/user/signup', async (request, response) => {
   const newUser = request.body;
   for (let requiredParameter of ['email', 'password']) {
     if(!newUser[requiredParameter]) {
