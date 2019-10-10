@@ -5,7 +5,7 @@ services:
   - postgresql
 before_script: 
   - psql -c 'CREATE DATABASE color_picker_test;' -U postgres
-  - 'knex:migrate latest'
-  - 'knex:seed run'
+  - 'knex migrate:latest'
+  - 'knex seed:run'
 notifications: 
   emails: false
