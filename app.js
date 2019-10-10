@@ -42,7 +42,7 @@ app.get('/palettes/:id', async (request, response) => {
   const projectPalettes = await database('palettes').where('project_id', id).select();
 
   return response.status(200).json(projectPalettes)
-})
+});
 
 app.get('/palettes', async (request, response) => {
   const { name } = request.query;
