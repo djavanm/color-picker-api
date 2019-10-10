@@ -17,17 +17,17 @@ describe('Server', () => {
     });
   });
 
-  describe('GET /user', () => {
+  describe('POST /user/login', () => {
     it('should return a 200 status code and user ID when user logs', async () => {
       const expectedUser = await database('users').select().first();
       const { email, password, id } = expectedUser;
-      const response = await request(app).get('/user').send({email, password});
+      const response = await request(app).post('/user/login').send({email, password});
       expect(response.body.id).toEqual(id);
     });
 
     it('should return a 400 status and error message if email or password is missing.', async () => {
       const userLoginInfo = { password: '12345'};
-      const response = await request(app).get('/user').send(userLoginInfo);
+      const response = await request(app).post('/user/login').send(userLoginInfo);
       const missingEmailError = `Expected format: { email: <string>, password: <string> }. You are missing a value for email.`;
       expect(response.status).toBe(400);
       expect(response.body.error).toEqual(missingEmailError);
@@ -35,7 +35,7 @@ describe('Server', () => {
 
     it('should return a 400 status and error message if email or password is incorrect.', async () => {
       const userLoginInfo = { email: '12345', password: 'bob'};
-      const response = await request(app).get('/user').send(userLoginInfo);
+      const response = await request(app).post('/user/login').send(userLoginInfo);
       expect(response.status).toBe(400);
       expect(response.body.error).toEqual("Unable to verify user.");
     });
@@ -73,10 +73,10 @@ describe('Server', () => {
     })
   })
 
-  describe('POST /user', () => {
+  describe('POST /user/signup', () => {
     it('should return a 201 status code and a new user Id', async () => {
       const newUserInfo = { email: 'hellokitty@turing.io', password: '12345'};
-      const response = await request(app).post('/user').send(newUserInfo);
+      const response = await request(app).post('/user/signup').send(newUserInfo);
       const expectedUser = await database('users').where('email', newUserInfo.email).first();
       expect(response.status).toBe(201);
       expect(response.body.id).toEqual(expectedUser.id);
@@ -84,14 +84,14 @@ describe('Server', () => {
 
     it('should return a 422 status code if there is a missing parameter in request body', async () => {
       const newUserInfo = { password: '12345'};
-      const response = await request(app).post('/user').send(newUserInfo);
+      const response = await request(app).post('/user/signup').send(newUserInfo);
       expect(response.status).toBe(422);
       expect(response.body.error).toEqual("Expected format: { email: <string>, password: <string> }. You are missing a value for email.")
     });
 
     it('should return a 401 status code if the email is already in use.', async () => {
       const newUserInfo = { email: "bob@gmail.com", password: '12345'};
-      const response = await request(app).post('/user').send(newUserInfo);
+      const response = await request(app).post('/user/signup').send(newUserInfo);
       expect(response.status).toBe(401);
       expect(response.body.error).toEqual("User already exists.");
     });
