@@ -4,7 +4,7 @@
 
 ### Installation and Setup
 From the command line:
-1. `git clone https://github.com/djavanm/90s-sitcoms-api <PROJECT_NAME>`
+1. `git clone https://github.com/djavanm/color-picker-api <PROJECT_NAME>`
 1. Run `npm install`
 1. Run `nodemon server.js`
 
