@@ -139,8 +139,12 @@ describe('Server', () => {
     it('should delete and return a 204 status code', async () => {
       const { id } = await database('palettes').first();
       const response = await request(app).delete(`/palettes/${id}`);
-
       expect(response.status).toBe(204);
+    });
+    it('should not delete and return a 404 status code when given improper data', async () => {
+      const response = await request(app).delete(`/palettes/${-1}`);
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('This palette does not exist.');
     });
   });
 
@@ -148,9 +152,14 @@ describe('Server', () => {
     it('should delete a project and all its associated palettes return a 204 status code', async () => {
       const { id } = await database('projects').first();
       const response = await request(app).delete(`/projects/${id}`);
-
       expect(response.status).toBe(204);
     });
+    it('should not delete and return a 404 status code when given improper data', async () => {
+      const response = await request(app).delete(`/projects/${-1}`);
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('This project does not exist.');
+    });
+
   });
 
   describe('PATCH /palettes/:id', () => {
@@ -160,6 +169,11 @@ describe('Server', () => {
       expect(response.status).toBe(200);
       expect(response.body.name).toEqual('Palette Pat');
     });
+    it('should not patch and return a 404 status code when given improper data', async () => {
+      const response = await request(app).patch(`/palettes/${-1}`);
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('This palette does not exist.');
+    });
   });
   
   describe('PATCH /projects/:id', () => {
@@ -168,6 +182,11 @@ describe('Server', () => {
       const response = await request(app).patch(`/projects/${id}`).send({name: 'Project Pat'});
       expect(response.status).toBe(200);
       expect(response.body.name).toEqual('Project Pat');
+    });
+    it('should not patch and return a 404 status code when given improper data', async () => {
+      const response = await request(app).patch(`/projects/${-1}`);
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('This project does not exist.');
     });
   });
 
