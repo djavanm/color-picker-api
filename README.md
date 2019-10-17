@@ -25,8 +25,8 @@ Users can login to the website, and save color palettes under their specific use
 
 | url | verb | options | expected response |
 | ----|------|---------|---------------- |
-| https://color-picker-api.herokuapp.com/user/login` | POST |{"email": <STRING>, "password":<STRING>} | OBJECT containing user id after successful login. |
-| https://color-picker-api.herokuapp.com/user/singup` | POST |{"email": <STRING>, "password":<STRING>} | OBJECT containing user id after successful sign up. |
+| `https://color-picker-api.herokuapp.com/user/login` | POST |{"email": <STRING>, "password":<STRING>} | OBJECT containing user id after successful login. |
+| `https://color-picker-api.herokuapp.com/user/singup` | POST |{"email": <STRING>, "password":<STRING>} | OBJECT containing user id after successful sign up. |
 | `https://color-picker-api.herokuapp.com/projects/:id` | GET | not needed | ARRAY of all projects created with the associated user id. |
 | `https://color-picker-api.herokuapp.com/palettes/:id` | GET | not needed | ARRAY of all palettes created with the associated project id.|
 | `https://color-picker-api.herokuapp.com/palettes` | GET | not needed | ARRAY of all palettes currently in the database. OPTIONAL query parameter for palettes seletected with a string for NAME.|
